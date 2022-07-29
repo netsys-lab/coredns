@@ -19,4 +19,6 @@ const (
 	GRPCPort = "443"
 	// HTTPSPort is the default port for DNS-over-HTTPS.
 	HTTPSPort = "443"
+	// SCIONPort is the default port for DNS-over-SCION.
+	SCIONPort = "53"
 )

@@ -92,6 +92,9 @@ func (h *dnsContext) InspectServerBlocks(sourceFile string, serverBlocks []caddy
 					port = transport.GRPCPort
 				case transport.HTTPS:
 					port = transport.HTTPSPort
+				case transport.SCION:
+					port = transport.SCIONPort
+
 				}
 			}
 

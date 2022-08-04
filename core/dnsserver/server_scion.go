@@ -2,18 +2,15 @@ package dnsserver
 
 import (
 	"context"
-	"crypto/tls"
 	"fmt"
 	"net"
-	"time"
 
 	"github.com/coredns/caddy"
 	"github.com/coredns/coredns/plugin/pkg/transport"
-	"github.com/lucas-clemente/quic-go"
+
+	"github.com/netsys-lab/sqnet"
+
 	"github.com/miekg/dns"
-	"github.com/netsec-ethz/scion-apps/pkg/pan"
-	"github.com/netsec-ethz/scion-apps/pkg/quicutil"
-	"inet.af/netaddr"
 )
 
 // ServerTLS represents an instance of a TLS-over-DNS-server.
@@ -74,75 +71,10 @@ func (s *ServerSCION) ServePacket(p net.PacketConn) error {
 	return nil
 }
 
-type quicConn struct {
-	conn   quic.Session
-	stream quic.Stream
-}
-
-func (q *quicConn) Read(b []byte) (int, error) {
-	return q.stream.Read(b)
-}
-
-func (q *quicConn) Write(b []byte) (int, error) {
-	return q.stream.Write(b)
-}
-
-func (q *quicConn) Close() error {
-	return q.stream.Close()
-}
-
-func (q *quicConn) LocalAddr() net.Addr {
-	return q.conn.LocalAddr()
-}
-
-func (q *quicConn) RemoteAddr() net.Addr {
-	return q.conn.RemoteAddr()
-}
-
-func (q *quicConn) SetDeadline(t time.Time) error {
-	return q.stream.SetDeadline(t)
-}
-
-func (q *quicConn) SetReadDeadline(t time.Time) error {
-	return q.stream.SetReadDeadline(t)
-
-}
-
-func (q *quicConn) SetWriteDeadline(t time.Time) error {
-	return q.stream.SetWriteDeadline(t)
-}
-
-type quicListener struct {
-	quic.Listener
-}
-
-func (q *quicListener) Accept() (net.Conn, error) {
-	ctx := context.Background()
-	conn, err := q.Listener.Accept(ctx)
-	if err != nil {
-		return nil, err
-	}
-	stream, err := conn.AcceptStream(ctx)
-	if err != nil {
-		return nil, err
-	}
-	qconn := quicConn{conn: conn, stream: stream}
-
-	return &qconn, nil
-}
-
 // Listen implements caddy.TCPServer interface.
 func (s *ServerSCION) Listen() (net.Listener, error) {
-	tlsCfg := &tls.Config{
-		Certificates: quicutil.MustGenerateSelfSignedCert(),
-		NextProtos:   []string{"hello-quic"},
-	}
-	listen := netaddr.IPPortFrom(netaddr.IPFrom4([4]byte{127, 0, 0, 1}), 10001)
-	session, err := pan.ListenQUIC(context.Background(), listen, nil, tlsCfg, nil)
-	if err != nil {
-		return nil, err
-	}
-	return &quicListener{session}, nil
+	return sqnet.ListenString("0.0.0.0" + s.Server.Addr[len(transport.SCION+"://"):])
+
 }
 
 // ListenPacket implements caddy.UDPServer interface.

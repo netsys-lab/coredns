@@ -8,9 +8,8 @@ import (
 	"github.com/coredns/caddy"
 	"github.com/coredns/coredns/plugin/pkg/transport"
 
-	"github.com/netsys-lab/sqnet"
-
 	"github.com/miekg/dns"
+	"github.com/netsys-lab/sqnet"
 )
 
 // ServerTLS represents an instance of a TLS-over-DNS-server.

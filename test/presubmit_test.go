@@ -278,6 +278,7 @@ func (w *testImportOrderingWalker) walk(path string, info os.FileInfo, _ error) 
 		if bl > 2 {
 			absPath, _ := filepath.Abs(path)
 			w.Errors = append(w.Errors, fmt.Errorf("more than %d import blocks in %q", bl, absPath))
+			return w.Errors[len(w.Errors)-1]
 		}
 		blocks[bl] = append(blocks[bl], im)
 		prevpos = line

@@ -139,13 +139,6 @@ var dnsTestCases = []test.Case{
 		},
 		Ns: miekAuth,
 	},
-	{
-		Qname: "caa.miek.nl.", Qtype: dns.TypeCAA,
-		Answer: []dns.RR{
-			test.CAA(`caa.miek.nl.  1800	IN	CAA  0 issue letsencrypt.org`),
-		},
-		Ns: miekAuth,
-	},
 }
 
 const (

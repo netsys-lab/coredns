@@ -1,0 +1,17 @@
+scion://.:10000 {
+    root ./zones
+    rhine root.db
+    log
+}
+
+scion://com.:10001 {
+    root ./zones
+    rhine com.db
+    log
+}
+
+scion://rhine-test.com.:10002 {
+    root ./zones
+    rhine rhine-test.db
+    log
+}

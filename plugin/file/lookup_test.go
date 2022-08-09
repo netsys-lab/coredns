@@ -103,6 +103,13 @@ var dnsTestCases = []test.Case{
 		Ns: miekAuth,
 	},
 	{
+		Qname: "a.b.x.miek.nl.", Qtype: dns.TypeCNAME,
+		Rcode: dns.RcodeNameError,
+		Ns: []dns.RR{
+			test.SOA("miek.nl.	1800	IN	SOA	linode.atoom.net. miek.miek.nl. 1282630057 14400 3600 604800 14400"),
+		},
+	},
+	{
 		Qname: "asterisk.y.miek.nl.", Qtype: dns.TypeA,
 		Answer: []dns.RR{
 			test.A("asterisk.y.miek.nl.     1800    IN      A       139.162.196.78"),
@@ -124,6 +131,20 @@ var dnsTestCases = []test.Case{
 		},
 		Rcode: dns.RcodeServerFailure,
 		Ns:    miekAuth,
+	},
+	{
+		Qname: "txt.miek.nl.", Qtype: dns.TypeTXT,
+		Answer: []dns.RR{
+			test.TXT(`txt.miek.nl.  1800	IN	TXT "v=spf1 a mx ~all"`),
+		},
+		Ns: miekAuth,
+	},
+	{
+		Qname: "caa.miek.nl.", Qtype: dns.TypeCAA,
+		Answer: []dns.RR{
+			test.CAA(`caa.miek.nl.  1800	IN	CAA  0 issue letsencrypt.org`),
+		},
+		Ns: miekAuth,
 	},
 }
 
@@ -222,10 +243,13 @@ a               IN      A       139.162.196.78
 www             IN      CNAME   a
 archive         IN      CNAME   a
 *.x             IN      CNAME   www
+b.x             IN      CNAME   a
 *.y             IN      A       139.162.196.78
 dname           IN      DNAME   x
 
 srv		IN	SRV     10 10 8080 a.miek.nl.
 mx		IN	MX      10 a.miek.nl.
 
+txt     IN	TXT     "v=spf1 a mx ~all"
+caa     IN  CAA    0 issue letsencrypt.org
 ext-cname   IN   CNAME  example.com.`

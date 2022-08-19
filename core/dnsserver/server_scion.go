@@ -43,11 +43,7 @@ func (s *ServerSCION) Serve(l net.Listener) error {
 			s.ServeDNS(ctx, w, r)
 		})}
 
-	err := s.dnsserver.ActivateAndServe()
-	if err != nil {
-		panic(err)
-	}
-	return err
+	return s.dnsserver.ActivateAndServe()
 }
 
 // ServePacket implements caddy.UDPServer interface.

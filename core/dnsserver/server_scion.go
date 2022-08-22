@@ -6,6 +6,7 @@ import (
 	"net"
 
 	"github.com/coredns/caddy"
+	"github.com/coredns/coredns/plugin/pkg/log"
 	"github.com/coredns/coredns/plugin/pkg/transport"
 
 	"github.com/miekg/dns"
@@ -48,27 +49,17 @@ func (s *ServerSCION) Serve(l net.Listener) error {
 
 // ServePacket implements caddy.UDPServer interface.
 func (s *ServerSCION) ServePacket(p net.PacketConn) error {
-	/*s.dnsserver = &dns.Server{
-		PacketConn: p,
-		Net:        "udp",
-		ReusePort:  false,
-		//ReadTimeout: time.Minute,
-		Handler: dns.HandlerFunc(func(w dns.ResponseWriter, r *dns.Msg) {
-			ctx := context.WithValue(context.Background(), Key{}, s)
-			ctx = context.WithValue(ctx, LoopKey{}, 0)
-			s.ServeDNS(ctx, w, r)
-		})}
-
-	err := s.dnsserver.ActivateAndServe()
-	if err != nil {
-		panic(err)
-	}*/
+	log.Debug("Called ServePacket, which does nothing")
 	return nil
 }
 
 // Listen implements caddy.TCPServer interface.
 func (s *ServerSCION) Listen() (net.Listener, error) {
-	return sqnet.ListenString("0.0.0.0" + s.Server.Addr[len(transport.SCION+"://"):])
+	l, err := sqnet.ListenString("0.0.0.0" + s.Server.Addr[len(transport.SCION+"://"):])
+	if err != nil {
+		log.Error(err)
+	}
+	return l, err
 
 }
 

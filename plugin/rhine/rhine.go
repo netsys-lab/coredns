@@ -109,6 +109,7 @@ func (rh Rhine) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) 
 		m.Rcode = dns.RcodeServerFailure
 	}
 
+	log.Info("writing", "message", m)
 	w.WriteMsg(m)
 	return dns.RcodeSuccess, nil
 }
